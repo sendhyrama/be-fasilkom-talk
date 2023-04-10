@@ -5,8 +5,10 @@
  */
 
 const app = require('../app');
-const debug = require('debug')('fasilkom-talk:server');
+const debug = require('debug')('be-semina:server');
 const http = require('http');
+
+// import package db
 const db = require('../app/db');
 
 /**
@@ -14,24 +16,31 @@ const db = require('../app/db');
  */
 
 const port = normalizePort(process.env.PORT || '3000');
+
 app.set('port', port);
 
 /**
  * Create HTTP server.
  */
-// bila terjadi error saat connect ke mongdb maka akan tampil error diterminal
-db.on('error', function(err){
-  console.log('connection error: tidak bisa tersambung ke mongodb' );
-}); 
-
 
 const server = http.createServer(app);
 
+// bila terjadi error saat connect ke mongdb maka akan tampil error diterminal
+db.on('error', function (err) {
+  console.log('connection error: tidak bisa tersambung ke mongodb');
+});
 /**
  * Listen on provided port, on all network interfaces.
  */
-db.on('open', function(){
-  server.listen(port);
+
+/**
+ * kode yang mendeteksi jika koneksi dengan MongoDB telah terbuka dan
+ *  aplikasi berhasil terhubung dengan MongoDB,
+ */
+db.on('open', function () {
+  server.listen(port, () => {
+    console.log('server run port :' + port);
+  });
   server.on('error', onError);
   server.on('listening', onListening);
 });
@@ -65,9 +74,7 @@ function onError(error) {
     throw error;
   }
 
-  const bind = typeof port === 'string'
-    ? 'Pipe ' + port
-    : 'Port ' + port;
+  const bind = typeof port === 'string' ? 'Pipe ' + port : 'Port ' + port;
 
   // handle specific listen errors with friendly messages
   switch (error.code) {
@@ -90,8 +97,6 @@ function onError(error) {
 
 function onListening() {
   const addr = server.address();
-  const bind = typeof addr === 'string'
-    ? 'pipe ' + addr
-    : 'port ' + addr.port;
+  const bind = typeof addr === 'string' ? 'pipe ' + addr : 'port ' + addr.port;
   debug('Listening on ' + bind);
 }

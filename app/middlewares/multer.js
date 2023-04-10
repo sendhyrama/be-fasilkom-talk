@@ -2,7 +2,7 @@ const multer = require('multer');
 
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    cb(null, 'public/upload/');
+    cb(null, 'public/uploads/');
   },
   filename: function (req, file, cb) {
     cb(null, Math.floor(Math.random() * 99999999) + '-' + file.originalname);
@@ -10,7 +10,11 @@ const storage = multer.diskStorage({
 });
 
 const fileFilter = (req, file, cb) => {
-  if (file.mimetype === 'image/jpeg' || file.mimetype === 'image/jpg' || file.mimetype === 'image/png') {
+  if (
+    file.mimetype === 'image/jpeg' ||
+    file.mimetype === 'image/png' ||
+    file.mimetype === 'image/jpg'
+  ) {
     cb(null, true);
   } else {
     //reject file
